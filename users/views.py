@@ -31,12 +31,17 @@ def create_user(new_user: UserCreate, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.username == new_user.username).first()
     if user:
         raise HTTPException(status_code=400, detail="This username already exist.")
+
     hash_pass = pwd_context.hash(new_user.password)
 
     db_user = models.User(
         username = new_user.username,
         password = hash_pass,
     )
+
+    if new_user.profile:
+        db_user.profile = models.Profile(**new_user.profile.model_dump())
+
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -48,6 +53,11 @@ def update_user(id: int, new_user: UserUpdate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.id == id).first()
     if db_user:
         new_data = new_user.model_dump(exclude_unset=True)
+        if new_user.profile:
+            for k, v in new_user.profile.model_dump(exclude_unset=True).items():
+                setattr(db_user.profile, k, v)
+            new_data.pop("profile")
+            
         for k, v in new_data.items():
             setattr(db_user, k, v)
         db.commit()

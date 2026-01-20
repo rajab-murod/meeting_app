@@ -31,12 +31,14 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6, max_length=50)
+    profile: ProfileCreate | None = None
 
 
 class UserUpdate(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=50)
     password: Optional[str] = Field(..., min_length=6, max_length=50)
     is_active: Optional[bool] = None
+    profile: ProfileUpdate | None = None
 
 
 class UserResponse(UserBase):
