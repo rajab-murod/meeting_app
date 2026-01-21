@@ -1,14 +1,73 @@
+from decouple import config
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from jose import jwt, JWTError
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 from database import get_db
-from users.schemas import UserResponse, UserCreate, UserUpdate
+from users.schemas import UserResponse, UserCreate, UserUpdate, LoginRequest, Token
 from users import models
 
 user_router = APIRouter(prefix='/users', tags=["users"])
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login/")
+
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+SECRET_KEY = config("SECRET_KEY")
+
+
+def hash_password(password):
+    return pwd_context.hash(password)
+
+
+def verify_password(plain, hashed):
+    return pwd_context.verify(plain, hashed)
+
+
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        user_id: str | None = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    except JWTError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+    
+    user = db.query(models.User).get(int(user_id))
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
+@user_router.post("/login/", response_model=Token)
+def user_login(data: LoginRequest, db: Session = Depends(get_db)):
+
+    user = db.query(models.User).filter(models.User.username == data.username).first()
+
+    if not user or not verify_password(data.password, user.password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    token = create_access_token({"sub": str(user.id)})
+
+    return {"access_token": token, "token_type": "bearer"}
+
+
+@user_router.get("/me/", response_model=UserResponse)
+def get_me(current_user: models.User = Depends(get_current_user)):
+    
+    return current_user
 
 
 @user_router.get("/{id}/", response_model=UserResponse)
@@ -32,7 +91,7 @@ def create_user(new_user: UserCreate, db: Session = Depends(get_db)):
     if user:
         raise HTTPException(status_code=400, detail="This username already exist.")
 
-    hash_pass = pwd_context.hash(new_user.password)
+    hash_pass = hash_password(new_user.password)
 
     db_user = models.User(
         username = new_user.username,
