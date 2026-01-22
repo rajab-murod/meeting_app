@@ -7,8 +7,8 @@ class EduYear(Base):
     name = Column(String, nullable=False)
 
 
-# class Subject(Base):
-#     name = Column(String, nullable=False)
+class Subject(Base):
+    name = Column(String, nullable=False)
 
 
 # class Meeting(Base):

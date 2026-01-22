@@ -15,3 +15,19 @@ class EduYearResponse(EduYearBase):
 
 class EduYearCreate(EduYearBase):
     pass
+
+
+class SubjectBase(BaseModel):
+    name: str
+
+class SubjectResponse(SubjectBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class SubjectCreate(SubjectBase):
+    pass
