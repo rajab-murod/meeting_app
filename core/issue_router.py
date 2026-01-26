@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -15,7 +15,7 @@ class IssueViewSet(ModelViewSet):
 
 
 @issue_router.get("/", response_model=List[schemas.IssueResponse])
-def list_issue(db: Session = Depends(get_db), skip: int = 0, limit: int = 200):
+def list_issue(db: Session = Depends(get_db), subject_id: Optional[int] = None, skip: int = 0, limit: int = 200):
     
     return IssueViewSet(db).list(skip=skip, limit=limit)
 
@@ -31,7 +31,7 @@ def create_issue(new_data: schemas.IssueCreate, db: Session = Depends(get_db)):
 
 
 @issue_router.patch("/update/{id}/", response_model=schemas.IssueResponse)
-def update_issue(id: int, new_data: schemas.IssueCreate, db: Session = Depends(get_db)):
+def update_issue(id: int, new_data: schemas.IssueUpdate, db: Session = Depends(get_db)):
     return IssueViewSet(db).update(obj_id=id, data=new_data.model_dump(exclude_unset=True))
 
 

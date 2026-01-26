@@ -1,6 +1,11 @@
+import enum
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
+from core.models import IssueStatus
+
+from users.schemas import UserResponse
+
 
 class EduYearBase(BaseModel):
     name: str
@@ -65,8 +70,14 @@ class IssueBase(BaseModel):
     user_id: int
     expired: datetime
 
+
 class IssueResponse(IssueBase):
     id: int
+    user: UserResponse
+    meeting: MeetingResponse
+    subject: SubjectResponse
+    is_confirm: bool
+    status: IssueStatus
     created_at: datetime
     updated_at: datetime
 
@@ -76,3 +87,10 @@ class IssueResponse(IssueBase):
 
 class IssueCreate(IssueBase):
     pass
+
+
+class IssueUpdate(IssueBase):
+    meeting_id: int
+    subject_id: int
+    is_confirm: bool
+    status: IssueStatus

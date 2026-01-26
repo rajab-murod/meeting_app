@@ -11,6 +11,8 @@ class EduYear(Base):
 
 class Subject(Base):
     name = Column(String, nullable=False)
+    
+    issues = relationship("Issue", back_populates="subject")
 
 
 class Meeting(Base):
@@ -19,7 +21,9 @@ class Meeting(Base):
     input_time = Column(DateTime, nullable=False)
     is_confirm = Column(Boolean, default=False)
     edu_year_id = Column(Integer, ForeignKey("eduyears.id"), nullable=True)
+
     edu_year = relationship("EduYear", back_populates="meetings")
+    issues = relationship("Issue", back_populates="meeting")
 
 import enum
 
@@ -50,7 +54,9 @@ class Issue(Base):
     status = Column(Enum(IssueStatus, native_enum=False), default=IssueStatus.NEW, nullable=False)
     desc = Column(Text, nullable=True, default=None)
 
-    # user = relationship("User", back_populates="issues")
+    user = relationship("User", back_populates="issues")
+    meeting = relationship("Meeting", back_populates="issues")
+    subject = relationship("Subject", back_populates="issues")
 
 
 # class InfoIssue(Base):
