@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from database import get_db
+from app.database import get_db
 from users.schemas import UserResponse, UserCreate, UserUpdate, LoginRequest, Token
 from users import models
 

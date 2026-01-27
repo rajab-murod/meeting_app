@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from core import models, schemas
-from database import get_db
+from app.database import get_db
 from baseviews.modelviews import ModelViewSet
 
 subject_router = APIRouter(prefix="/subjects", tags=["subjects"])

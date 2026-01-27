@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, Boolean, String, DateTime, ForeignKey, Enum, Text
 from sqlalchemy.orm import relationship
 
-from database import Base
+from app.database import Base
 
 
 class EduYear(Base):
@@ -24,6 +24,8 @@ class Meeting(Base):
 
     edu_year = relationship("EduYear", back_populates="meetings")
     issues = relationship("Issue", back_populates="meeting")
+    
+    att_dances = relationship("Attendance", back_populates="meeting")
 
 import enum
 
@@ -58,13 +60,24 @@ class Issue(Base):
     meeting = relationship("Meeting", back_populates="issues")
     subject = relationship("Subject", back_populates="issues")
 
-
-# class InfoIssue(Base):
-#     content = Column(String)
+    info_issues = relationship("InfoIssue", back_populates="issue")
 
 
-# class Attendance(Base):
-#     pass
+class InfoIssue(Base):
+    issue_id = Column(Integer, ForeignKey("issues.id"))
+    content = Column(Text)
+    file_path = Column(String, nullable=True, default=None)
+
+    issue = relationship("Issue", back_populates="info_issues")
+
+
+class Attendance(Base):
+    meeting_id = Column(Integer, ForeignKey("meetings.id"), nullable = False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable = False)
+    date = Column(DateTime, nullable=False)
+
+    user = relationship("User", back_populates="att_dances")
+    meeting = relationship("Meeting", back_populates="att_dances")
 
 
 # class Vote(Base):

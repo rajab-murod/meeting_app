@@ -1,7 +1,6 @@
-import enum
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from core.models import IssueStatus
 
 from users.schemas import UserResponse
@@ -15,8 +14,7 @@ class EduYearResponse(EduYearBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class EduYearCreate(EduYearBase):
@@ -31,8 +29,7 @@ class SubjectResponse(SubjectBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SubjectCreate(SubjectBase):
@@ -56,8 +53,7 @@ class MeetingResponse(MeetingBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MeetingCreate(MeetingBase):
@@ -81,8 +77,7 @@ class IssueResponse(IssueBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class IssueCreate(IssueBase):

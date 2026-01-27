@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Boolean, ForeignKey, Integer
 from sqlalchemy.orm import relationship
-from database import Base
+from app.database import Base
 
 
 class User(Base):
@@ -10,6 +10,8 @@ class User(Base):
 
     profile = relationship("Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     issues = relationship("Issue", back_populates="user")
+
+    att_dances = relationship("Attendance", back_populates="user")
 
 
 class Profile(Base):

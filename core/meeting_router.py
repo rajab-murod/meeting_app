@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from core import models, schemas
-from database import get_db
+from app.database import get_db
 from baseviews.modelviews import ModelViewSet
 
 meeting_router = APIRouter(prefix="/meetings", tags=["meetings"])

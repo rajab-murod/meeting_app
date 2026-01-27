@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from core.schemas import EduYearResponse, EduYearCreate
 from core import models
-from database import get_db
+from app.database import get_db
 from baseviews.modelviews import ModelViewSet
 
 
