@@ -1,7 +1,6 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 
 from core import models, schemas
 from app.database import get_db
@@ -16,7 +15,8 @@ class IssueViewSet(ModelViewSet):
 
 @issue_router.get("/", response_model=List[schemas.IssueResponse])
 def list_issue(db: Session = Depends(get_db), subject_id: Optional[int] = None, skip: int = 0, limit: int = 200):
-    
+    if subject_id:
+        return db.query(models.Issue).filter(models.Issue.subject_id == subject_id).offset(skip).limit(limit).all()
     return IssueViewSet(db).list(skip=skip, limit=limit)
 
 

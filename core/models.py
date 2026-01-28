@@ -1,3 +1,4 @@
+import enum
 from sqlalchemy import Column, Integer, Boolean, String, DateTime, ForeignKey, Enum, Text
 from sqlalchemy.orm import relationship
 
@@ -26,8 +27,9 @@ class Meeting(Base):
     issues = relationship("Issue", back_populates="meeting")
     
     att_dances = relationship("Attendance", back_populates="meeting")
+    votes = relationship("Vote", back_populates="meeting")
+    questions = relationship("Question", back_populates="meeting")
 
-import enum
 
 class IssueStatus(enum.Enum):
     NEW = "new"
@@ -61,6 +63,8 @@ class Issue(Base):
     subject = relationship("Subject", back_populates="issues")
 
     info_issues = relationship("InfoIssue", back_populates="issue")
+    votes = relationship("Vote", back_populates="issue")
+    questions = relationship("Question", back_populates="issue")
 
 
 class InfoIssue(Base):
@@ -80,9 +84,51 @@ class Attendance(Base):
     meeting = relationship("Meeting", back_populates="att_dances")
 
 
-# class Vote(Base):
-#     pass
+class VoteStatus(enum.Enum):
+    DISAGREE = "disagree"
+    AGREE = "agree"
+    NEUTRAL = "neutral"
+
+    # Optional: Map keys to human-readable labels
+    @classmethod
+    def labels(cls):
+        return {
+            cls.DISAGREE: "Qarshi",
+            cls.AGREE: "Rozi",
+            cls.NEUTRAL: "Betaraf",
+        }
+
+class VoteType(enum.Enum):
+    AGENDA = "agenda"
+    ISSUE = "issue"
+
+    # Optional: Map keys to human-readable labels
+    @classmethod
+    def labels(cls):
+        return {
+            cls.AGENDA: "Kun tartibi",
+            cls.ISSUE: "Masala",
+        }
+  
+
+class Vote(Base):
+    meeting_id = Column(Integer, ForeignKey("meetings.id"), nullable=False)
+    issue_id = Column(Integer, ForeignKey("issues.id"), nullable=True, default=None)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable = False)
+    status = Column(Enum(VoteStatus, native_enum=False), nullable=False)
+    vote_type = Column(Enum(VoteType, native_enum=False), nullable=False)
+
+    user = relationship("User", back_populates="votes")
+    meeting = relationship("Meeting", back_populates="votes")
+    issue = relationship("Issue", back_populates="votes")
 
 
-# class Question(Base):
-#     pass
+class Question(Base):
+    meeting_id = Column(Integer, ForeignKey("meetings.id"), nullable = False)
+    issue_id = Column(Integer, ForeignKey("issues.id"), nullable = False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable = False)
+    text = Column(Text)
+
+    user = relationship("User", back_populates="questions")
+    meeting = relationship("Meeting", back_populates="questions")
+    issue = relationship("Issue", back_populates="questions")

@@ -17,7 +17,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 from app.database import Base
-from core.models import EduYear, Subject, Meeting, Issue, InfoIssue, Attendance
+from core.models import EduYear, Subject, Meeting, Issue, InfoIssue, Attendance, Vote, Question
 from users.models import User, Profile
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata

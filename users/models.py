@@ -12,6 +12,8 @@ class User(Base):
     issues = relationship("Issue", back_populates="user")
 
     att_dances = relationship("Attendance", back_populates="user")
+    votes = relationship("Vote", back_populates="user")
+    questions = relationship("Question", back_populates="user")
 
 
 class Profile(Base):

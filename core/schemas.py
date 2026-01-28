@@ -60,7 +60,6 @@ class MeetingCreate(MeetingBase):
     edu_year_id: Optional[int] = None
 
 
-
 class IssueBase(BaseModel):
     title: str
     user_id: int
@@ -89,3 +88,49 @@ class IssueUpdate(IssueBase):
     subject_id: int
     is_confirm: bool
     status: IssueStatus
+
+
+class InfoIssueBase(BaseModel):
+    content: str
+    
+
+class InfoIssueResponse(InfoIssueBase):
+    id: int
+    issue: IssueResponse
+    file_path: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class InfoIssueCreate(InfoIssueBase):
+    issue_id: int
+
+
+class InfoIssueUpdate(InfoIssueBase):
+    issue_id: int
+
+
+class AttendanceBase(BaseModel):
+    date: datetime
+    
+
+class AttendanceResponse(AttendanceBase):
+    id: int
+    user: UserResponse
+    meeting: MeetingResponse
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AttendanceCreate(AttendanceBase):
+    meeting_id: int
+    user_id: int
+
+
+class AttendanceUpdate(AttendanceBase):
+    meeting_id: int
+    user_id: int
