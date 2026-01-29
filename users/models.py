@@ -9,11 +9,11 @@ class User(Base):
     is_active = Column(Boolean, default=True)
 
     profile = relationship("Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
-    issues = relationship("Issue", back_populates="user")
+    issues = relationship("Issue", back_populates="user", cascade="all, delete-orphan")
 
-    att_dances = relationship("Attendance", back_populates="user")
-    votes = relationship("Vote", back_populates="user")
-    questions = relationship("Question", back_populates="user")
+    att_dances = relationship("Attendance", back_populates="user", cascade="all, delete-orphan")
+    votes = relationship("Vote", back_populates="user", cascade="all, delete-orphan")
+    questions = relationship("Question", back_populates="user", cascade="all, delete-orphan")
 
 
 class Profile(Base):

@@ -7,7 +7,7 @@ from app.database import Base
 
 class EduYear(Base):
     name = Column(String, nullable=False)
-    meetings = relationship("Meeting", back_populates="edu_year")
+    meetings = relationship("Meeting", back_populates="edu_year", cascade="all, delete-orphan")
 
 
 class Subject(Base):
@@ -62,7 +62,7 @@ class Issue(Base):
     meeting = relationship("Meeting", back_populates="issues")
     subject = relationship("Subject", back_populates="issues")
 
-    info_issues = relationship("InfoIssue", back_populates="issue")
+    info_issues = relationship("InfoIssue", back_populates="issue", cascade="all, delete-orphan")
     votes = relationship("Vote", back_populates="issue")
     questions = relationship("Question", back_populates="issue")
 

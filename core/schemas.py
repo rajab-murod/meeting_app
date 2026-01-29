@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
-from core.models import IssueStatus
+from core.models import IssueStatus, VoteStatus, VoteType
 
 from users.schemas import UserResponse
 
@@ -134,3 +134,68 @@ class AttendanceCreate(AttendanceBase):
 class AttendanceUpdate(AttendanceBase):
     meeting_id: int
     user_id: int
+
+
+class VoteStat(BaseModel):
+    id: int
+    name: str
+    vote_count: int
+    att_count: int
+    status: Optional[str] = None
+
+
+class VoteBase(BaseModel):
+    vote_type: VoteType
+    status: VoteStatus
+    
+
+class VoteResponse(VoteBase):
+    id: int
+    user: UserResponse
+    meeting: MeetingResponse
+    issue: IssueResponse
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class VoteCreate(VoteBase):
+    meeting_id: int
+    user_id: int
+    issue_id: int | None = None
+    
+
+
+class VoteUpdate(VoteBase):
+    meeting_id: int
+    user_id: int
+    issue_id: int | None = None
+
+
+
+class QuestionBase(BaseModel):
+    text: str
+    
+
+class QuestionResponse(QuestionBase):
+    id: int
+    user: UserResponse
+    meeting: MeetingResponse
+    issue: IssueResponse
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class QuestionCreate(QuestionBase):
+    meeting_id: int
+    user_id: int
+    issue_id: int
+
+
+class QuestionUpdate(QuestionBase):
+    meeting_id: int
+    user_id: int
+    issue_id: int
