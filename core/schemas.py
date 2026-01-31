@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
 from core.models import IssueStatus, VoteStatus, VoteType
 
@@ -124,6 +124,24 @@ class AttendanceResponse(AttendanceBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class AttStatByMeeting(BaseModel):
+    id: int
+    name: str
+    att_count: int
+
+
+class AttStatByMeetingDetail(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    count: int
+
+
+class AttStatByEduYear(BaseModel):
+    total: int
+    data: List[AttStatByMeetingDetail]
 
 
 class AttendanceCreate(AttendanceBase):
